@@ -17,12 +17,20 @@ function Home({ chats, socket }) {
   }, [chats]);
 
   useEffect(() => {
-    socket.on("chatMessage", (newChat) => {
-      setChatList((prevChats) => [...prevChats, newChat]);
-    });
+    const handleNewChatMessage = (newChat) => {
+      setChatList((prevChats) => {
+        // Проверяем, не было ли это сообщение уже добавлено
+        if (!prevChats.some(chat => chat._id === newChat._id)) {
+          return [...prevChats, newChat];
+        }
+        return prevChats;
+      });
+    };
+
+    socket.on("chatMessage", handleNewChatMessage);
 
     return () => {
-      socket.off("chatMessage");
+      socket.off("chatMessage", handleNewChatMessage);
     };
   }, [socket]);
 
@@ -36,12 +44,32 @@ function Home({ chats, socket }) {
         body: JSON.stringify(data),
       });
       const newChat = await response.json();
-      setChatList((prevChats) => [...prevChats, newChat]);
+      // После успешной отправки на сервер, сервер должен уведомить всех через WebSocket
+      // Убедитесь, что сервер отправляет это сообщение обратно через WebSocket
       // socket.emit('newChatMessage', newChat);
     } catch (error) {
       console.log(error);
     }
     reset();
+  }
+
+  async function deleteChats(id) {
+    try {
+      const response = await fetch(`https://chat-ubzo.onrender.com/chats/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        setChatList((prevChats) => prevChats.filter((chat) => chat._id !== id));
+      } else {
+        console.error("Failed to delete chat");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (
@@ -50,7 +78,7 @@ function Home({ chats, socket }) {
       <div className="flex-1 flex flex-col justify-between py-[40px]">
         <div>
           {chatList?.map((item, index) => (
-            <p className="max-w-[400px] mb-5" key={index}>
+            <p onClick={() => deleteChats(item._id)} className="cursor-pointer max-w-[400px] mb-5" key={item._id}>
               <span className="bg-violet-600 rounded-full max-w-[60px] text-white p-2">{item.text}</span>
             </p>
           ))}
