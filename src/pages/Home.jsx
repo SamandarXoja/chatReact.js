@@ -15,18 +15,16 @@ function Home({ chats, socket }) {
   useEffect(() => {
     setChatList(chats);
   }, [chats]);
+
   useEffect(() => {
-    // Подписываемся на событие 'chatsList' от сокета
-    socket.on("chatsList", (receivedChats) => {
-      setChatList(receivedChats); // Обновляем chatList при получении новых чатов
-      console.log("Received chats:", receivedChats);
+    socket.on("chatMessage", (newChat) => {
+      setChatList((prevChats) => [...prevChats, newChat]);
     });
 
     return () => {
-      // Отписываемся от события при размонтировании компонента
-      socket.off("chatsList");
+      socket.off("chatMessage");
     };
-  }, [socket]); // Подписываемся на изменения сокета
+  }, [socket]);
 
   async function onSubmit(data) {
     try {
@@ -38,8 +36,8 @@ function Home({ chats, socket }) {
         body: JSON.stringify(data),
       });
       const newChat = await response.json();
-      // Добавляем новый чат в chatList
-      setChatList([...chatList, newChat]);
+      setChatList((prevChats) => [...prevChats, newChat]);
+      // socket.emit('newChatMessage', newChat);
     } catch (error) {
       console.log(error);
     }
@@ -63,7 +61,7 @@ function Home({ chats, socket }) {
             className="border-[2px] outline-none p-[10px] border-gray-200 rounded-md h-[100px] max-w-[500px] w-full"
             {...register("text", { required: true })}
           />
-          <button className="block bg-[#295498] text-[#fff] max-w-[100px] w-full  rounded-md py-2">send</button>
+          <button className="block bg-[#295498] text-[#fff] max-w-[100px] w-full rounded-md py-2">send</button>
         </form>
       </div>
     </div>

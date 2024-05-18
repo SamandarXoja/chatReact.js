@@ -14,9 +14,8 @@ function App() {
   useEffect(() => {
     fetchChats();
 
-    socket.on("chatsList", (receivedChats) => {
-      console.log("Received chats:", receivedChats);
-      setChats(receivedChats);
+    socket.on("chatMessage", (newChat) => {
+      setChats((prevChats) => [...prevChats, newChat]);
     });
 
     return () => {
