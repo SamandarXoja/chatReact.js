@@ -1,6 +1,8 @@
 import Aside from "../components/Aside";
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
+import Header from "../components/Header";
+import { Send, BringToFront } from "lucide-react";
 
 function Home({ chats, socket }) {
   const [chatList, setChatList] = useState([]);
@@ -20,7 +22,7 @@ function Home({ chats, socket }) {
     const handleNewChatMessage = (newChat) => {
       setChatList((prevChats) => {
         // Проверяем, не было ли это сообщение уже добавлено
-        if (!prevChats.some(chat => chat._id === newChat._id)) {
+        if (!prevChats.some((chat) => chat._id === newChat._id)) {
           return [...prevChats, newChat];
         }
         return prevChats;
@@ -73,26 +75,40 @@ function Home({ chats, socket }) {
   }
 
   return (
-    <div className="flex gap-x-[15px]">
-      <Aside />
-      <div className="flex-1 flex flex-col justify-between py-[40px]">
-        <div>
-          {chatList?.map((item, index) => (
-            <p onClick={() => deleteChats(item._id)} className="cursor-pointer max-w-[400px] mb-5" key={item._id}>
-              <span className="bg-violet-600 rounded-full max-w-[60px] text-white p-2">{item.text}</span>
-            </p>
-          ))}
+    <>
+      <Header />
+      <div className="flex">
+        <Aside />
+        <div className="flex-1 flex flex-col justify-between">
+          <div>
+            {chatList?.map((item, index) => (
+              <p
+                onClick={() => deleteChats(item._id)}
+                className="ml-6 cursor-pointer max-w-[400px] mb-5 mt-6"
+                key={item._id}
+              >
+                <span className="bg-violet-600 rounded-full max-w-[60px] text-white p-2">{item.text}</span>
+              </p>
+            ))}
+          </div>
+
+          <div className=" border-t px-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="flex gap-3 items-center">
+              <BringToFront color="#cfcecc"/> 
+              <textarea
+                type="text"
+                placeholder="Type here..."
+                className="border-none  pt-[25px] outline-none w-full"
+                {...register("text", { required: true })}
+              />
+              <button className="">
+                <Send color="#ffbd14" />{" "}
+              </button>
+            </form>
+          </div>
         </div>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <textarea
-            type="text"
-            className="border-[2px] outline-none p-[10px] border-gray-200 rounded-md h-[100px] max-w-[500px] w-full"
-            {...register("text", { required: true })}
-          />
-          <button className="block bg-[#295498] text-[#fff] max-w-[100px] w-full rounded-md py-2">send</button>
-        </form>
       </div>
-    </div>
+    </>
   );
 }
 
