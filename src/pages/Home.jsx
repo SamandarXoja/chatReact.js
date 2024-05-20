@@ -74,6 +74,10 @@ function Home({ chats, socket }) {
     }
   }
 
+
+
+  // https://chat-ubzo.onrender.com/chats/users
+
   return (
     <>
       <Header />
@@ -94,7 +98,7 @@ function Home({ chats, socket }) {
 
           <div className=" border-t px-6">
             <form onSubmit={handleSubmit(onSubmit)} className="flex gap-3 items-center">
-              <BringToFront color="#cfcecc"/> 
+              <BringToFront color="#cfcecc" />
               <textarea
                 type="text"
                 placeholder="Type here..."

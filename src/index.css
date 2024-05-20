@@ -14,3 +14,8 @@
 textarea {
   resize: none;
 }
+
+
+.as {
+  width: 400px !important;
+}
