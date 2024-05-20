@@ -29,7 +29,7 @@ function Aside() {
       </button>
       <aside
         className={`${
-          open ? "sm:max-w-[400px] xs:max-w-[400px]" : ""
+          open ? "sm:w-[80px] xs:w-[80px]" : "sm:max-w-[500px] xs:max-w-[500px]"
         } aside  2xl:max-w-[400px] xl:max-w-[400px] lg:max-w-[400px] md:max-w-[400px] sm:max-w-[80px] xs:max-w-[80px] pl-[21px]  pr-[20px] pt-[15px] 2xl:overflow-y-scroll xl:overflow-y-scroll lg:overflow-y-scroll md:overflow-y-scroll sm:overflow-hidden xs:overflow-hidden  h-[100vh] border-r w-full`}
       >
         <div className="flex justify-between items-center mb-9">
